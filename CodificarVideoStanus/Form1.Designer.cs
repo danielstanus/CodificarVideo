@@ -24,6 +24,7 @@ namespace CodificarVideoStanus
             SubtitlesTextBox = new TextBox();
             OutputVideoTextBox = new TextBox();
             groupBox1 = new GroupBox();
+            checkOnlyConvert = new CheckBox();
             checkEspañol = new CheckBox();
             checkRumano = new CheckBox();
             label4 = new Label();
@@ -42,13 +43,13 @@ namespace CodificarVideoStanus
             btnFfmpegPath = new Button();
             txtFfmpegPath = new TextBox();
             labelFfmpegPath = new Label();
-            checkOnlyConvert = new CheckBox();
+            btnStop = new Button();
             groupBox1.SuspendLayout();
             SuspendLayout();
             // 
             // buttonVideo
             // 
-            buttonVideo.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
+            buttonVideo.Font = new Font("Segoe UI", 11F);
             buttonVideo.Location = new Point(12, 12);
             buttonVideo.Name = "buttonVideo";
             buttonVideo.Size = new Size(160, 50);
@@ -57,21 +58,10 @@ namespace CodificarVideoStanus
             buttonVideo.UseVisualStyleBackColor = true;
             buttonVideo.Click += buttonVideo_Click;
             // 
-            // buttonSubtitulo
-            // 
-            buttonSubtitulo.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point);
-            buttonSubtitulo.Location = new Point(12, 68);
-            buttonSubtitulo.Name = "buttonSubtitulo";
-            buttonSubtitulo.Size = new Size(160, 50);
-            buttonSubtitulo.TabIndex = 1;
-            buttonSubtitulo.Text = "📜 Seleccionar subtitulo";
-            buttonSubtitulo.UseVisualStyleBackColor = true;
-            buttonSubtitulo.Click += buttonSubtitulo_Click;
-            // 
             // buttonConvertir
             // 
             buttonConvertir.BackColor = Color.MistyRose;
-            buttonConvertir.Font = new Font("Segoe UI", 14F, FontStyle.Regular, GraphicsUnit.Point);
+            buttonConvertir.Font = new Font("Segoe UI", 14F);
             buttonConvertir.Location = new Point(12, 124);
             buttonConvertir.Name = "buttonConvertir";
             buttonConvertir.Size = new Size(160, 60);
@@ -80,10 +70,21 @@ namespace CodificarVideoStanus
             buttonConvertir.UseVisualStyleBackColor = false;
             buttonConvertir.Click += buttonConvertir_Click;
             // 
+            // buttonSubtitulo
+            // 
+            buttonSubtitulo.Font = new Font("Segoe UI", 11F);
+            buttonSubtitulo.Location = new Point(12, 68);
+            buttonSubtitulo.Name = "buttonSubtitulo";
+            buttonSubtitulo.Size = new Size(160, 50);
+            buttonSubtitulo.TabIndex = 1;
+            buttonSubtitulo.Text = "📜 Seleccionar subtitulo";
+            buttonSubtitulo.UseVisualStyleBackColor = true;
+            buttonSubtitulo.Click += buttonSubtitulo_Click;
+            // 
             // btnStop
             // 
             btnStop.BackColor = Color.Tomato;
-            btnStop.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            btnStop.Font = new Font("Segoe UI", 12F);
             btnStop.Location = new Point(12, 190);
             btnStop.Name = "btnStop";
             btnStop.Size = new Size(160, 45);
@@ -109,15 +110,13 @@ namespace CodificarVideoStanus
             VideoInputTextBox.Size = new Size(898, 30);
             VideoInputTextBox.TabIndex = 5;
             // 
-            // label5
+            // SubtitlesTextBox
             // 
-            label5.AutoSize = true;
-            label5.Location = new Point(190, 80);
-            label5.Name = "label5";
-            label5.Size = new Size(48, 15);
-            label5.TabIndex = 6;
-            label5.Text = "Output:";
-            label5.Click += label5_Click;
+            SubtitlesTextBox.Location = new Point(190, 153);
+            SubtitlesTextBox.Multiline = true;
+            SubtitlesTextBox.Name = "SubtitlesTextBox";
+            SubtitlesTextBox.Size = new Size(898, 30);
+            SubtitlesTextBox.TabIndex = 9;
             // 
             // OutputVideoTextBox
             // 
@@ -127,49 +126,6 @@ namespace CodificarVideoStanus
             OutputVideoTextBox.Size = new Size(898, 30);
             OutputVideoTextBox.TabIndex = 7;
             OutputVideoTextBox.TextChanged += OutputVideoTextBox_TextChanged;
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new Point(190, 135);
-            label6.Name = "label6";
-            label6.Size = new Size(80, 15);
-            label6.TabIndex = 8;
-            label6.Text = "Input subtitle:";
-            // 
-            // SubtitlesTextBox
-            // 
-            SubtitlesTextBox.Location = new Point(190, 153);
-            SubtitlesTextBox.Multiline = true;
-            SubtitlesTextBox.Name = "SubtitlesTextBox";
-            SubtitlesTextBox.Size = new Size(898, 30);
-            SubtitlesTextBox.TabIndex = 9;
-            // 
-            // labelFfmpegPath
-            // 
-            labelFfmpegPath.AutoSize = true;
-            labelFfmpegPath.Location = new Point(190, 190);
-            labelFfmpegPath.Name = "labelFfmpegPath";
-            labelFfmpegPath.Size = new Size(75, 15);
-            labelFfmpegPath.TabIndex = 10;
-            labelFfmpegPath.Text = "FFmpeg EXE:";
-            // 
-            // txtFfmpegPath
-            // 
-            txtFfmpegPath.Location = new Point(190, 208);
-            txtFfmpegPath.Name = "txtFfmpegPath";
-            txtFfmpegPath.Size = new Size(768, 23);
-            txtFfmpegPath.TabIndex = 11;
-            // 
-            // btnFfmpegPath
-            // 
-            btnFfmpegPath.Location = new Point(964, 208);
-            btnFfmpegPath.Name = "btnFfmpegPath";
-            btnFfmpegPath.Size = new Size(124, 23);
-            btnFfmpegPath.TabIndex = 12;
-            btnFfmpegPath.Text = "🔍 Buscar";
-            btnFfmpegPath.UseVisualStyleBackColor = true;
-            btnFfmpegPath.Click += btnFfmpegPath_Click;
             // 
             // groupBox1
             // 
@@ -186,7 +142,7 @@ namespace CodificarVideoStanus
             groupBox1.Controls.Add(PadTextBox);
             groupBox1.Location = new Point(190, 240);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(300, 150);
+            groupBox1.Size = new Size(350, 180);
             groupBox1.TabIndex = 13;
             groupBox1.TabStop = false;
             groupBox1.Text = "Configuracion";
@@ -204,7 +160,7 @@ namespace CodificarVideoStanus
             // 
             PadTextBox.Location = new Point(80, 22);
             PadTextBox.Name = "PadTextBox";
-            PadTextBox.Size = new Size(200, 23);
+            PadTextBox.Size = new Size(150, 23);
             PadTextBox.TabIndex = 9;
             // 
             // label2
@@ -220,7 +176,7 @@ namespace CodificarVideoStanus
             // 
             FontSizeTextBox.Location = new Point(80, 52);
             FontSizeTextBox.Name = "FontSizeTextBox";
-            FontSizeTextBox.Size = new Size(200, 23);
+            FontSizeTextBox.Size = new Size(150, 23);
             FontSizeTextBox.TabIndex = 11;
             // 
             // labelQuality
@@ -228,7 +184,7 @@ namespace CodificarVideoStanus
             labelQuality.AutoSize = true;
             labelQuality.Location = new Point(15, 85);
             labelQuality.Name = "labelQuality";
-            labelQuality.Size = new Size(55, 15);
+            labelQuality.Size = new Size(50, 15);
             labelQuality.TabIndex = 12;
             labelQuality.Text = "Calidad:";
             // 
@@ -238,7 +194,7 @@ namespace CodificarVideoStanus
             QualityPresetComboBox.FormattingEnabled = true;
             QualityPresetComboBox.Location = new Point(80, 82);
             QualityPresetComboBox.Name = "QualityPresetComboBox";
-            QualityPresetComboBox.Size = new Size(200, 23);
+            QualityPresetComboBox.Size = new Size(150, 23);
             QualityPresetComboBox.TabIndex = 13;
             // 
             // label4
@@ -254,13 +210,13 @@ namespace CodificarVideoStanus
             // 
             PresetTextBox.Location = new Point(80, 112);
             PresetTextBox.Name = "PresetTextBox";
-            PresetTextBox.Size = new Size(200, 23);
+            PresetTextBox.Size = new Size(150, 23);
             PresetTextBox.TabIndex = 15;
             // 
             // checkRumano
             // 
             checkRumano.AutoSize = true;
-            checkRumano.Location = new Point(15, 30);
+            checkRumano.Location = new Point(240, 25);
             checkRumano.Name = "checkRumano";
             checkRumano.Size = new Size(71, 19);
             checkRumano.TabIndex = 16;
@@ -270,7 +226,7 @@ namespace CodificarVideoStanus
             // checkEspañol
             // 
             checkEspañol.AutoSize = true;
-            checkEspañol.Location = new Point(110, 30);
+            checkEspañol.Location = new Point(240, 50);
             checkEspañol.Name = "checkEspañol";
             checkEspañol.Size = new Size(67, 19);
             checkEspañol.TabIndex = 17;
@@ -280,12 +236,39 @@ namespace CodificarVideoStanus
             // checkOnlyConvert
             // 
             checkOnlyConvert.AutoSize = true;
-            checkOnlyConvert.Location = new Point(15, 60);
+            checkOnlyConvert.Location = new Point(240, 75);
             checkOnlyConvert.Name = "checkOnlyConvert";
             checkOnlyConvert.Size = new Size(93, 19);
             checkOnlyConvert.TabIndex = 18;
             checkOnlyConvert.Text = "OnlyConvert";
             checkOnlyConvert.UseVisualStyleBackColor = true;
+            // 
+            // CommandTextBox
+            // 
+            CommandTextBox.Location = new Point(12, 268);
+            CommandTextBox.Multiline = true;
+            CommandTextBox.Name = "CommandTextBox";
+            CommandTextBox.Size = new Size(160, 30);
+            CommandTextBox.TabIndex = 15;
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(190, 80);
+            label5.Name = "label5";
+            label5.Size = new Size(48, 15);
+            label5.TabIndex = 6;
+            label5.Text = "Output:";
+            label5.Click += label5_Click;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(190, 135);
+            label6.Name = "label6";
+            label6.Size = new Size(80, 15);
+            label6.TabIndex = 8;
+            label6.Text = "Input subtitle:";
             // 
             // label7
             // 
@@ -296,18 +279,10 @@ namespace CodificarVideoStanus
             label7.TabIndex = 14;
             label7.Text = "Comando:";
             // 
-            // CommandTextBox
-            // 
-            CommandTextBox.Location = new Point(12, 268);
-            CommandTextBox.Multiline = true;
-            CommandTextBox.Name = "CommandTextBox";
-            CommandTextBox.Size = new Size(160, 30);
-            CommandTextBox.TabIndex = 15;
-            // 
             // rtbLog
             // 
             rtbLog.BackColor = Color.Black;
-            rtbLog.Font = new Font("Consolas", 9F, FontStyle.Regular, GraphicsUnit.Point);
+            rtbLog.Font = new Font("Consolas", 9F);
             rtbLog.ForeColor = Color.LimeGreen;
             rtbLog.Location = new Point(510, 240);
             rtbLog.Name = "rtbLog";
@@ -315,6 +290,32 @@ namespace CodificarVideoStanus
             rtbLog.Size = new Size(578, 150);
             rtbLog.TabIndex = 16;
             rtbLog.Text = "";
+            // 
+            // btnFfmpegPath
+            // 
+            btnFfmpegPath.Location = new Point(964, 208);
+            btnFfmpegPath.Name = "btnFfmpegPath";
+            btnFfmpegPath.Size = new Size(124, 23);
+            btnFfmpegPath.TabIndex = 12;
+            btnFfmpegPath.Text = "🔍 Buscar";
+            btnFfmpegPath.UseVisualStyleBackColor = true;
+            btnFfmpegPath.Click += btnFfmpegPath_Click;
+            // 
+            // txtFfmpegPath
+            // 
+            txtFfmpegPath.Location = new Point(190, 208);
+            txtFfmpegPath.Name = "txtFfmpegPath";
+            txtFfmpegPath.Size = new Size(768, 23);
+            txtFfmpegPath.TabIndex = 11;
+            // 
+            // labelFfmpegPath
+            // 
+            labelFfmpegPath.AutoSize = true;
+            labelFfmpegPath.Location = new Point(190, 190);
+            labelFfmpegPath.Name = "labelFfmpegPath";
+            labelFfmpegPath.Size = new Size(75, 15);
+            labelFfmpegPath.TabIndex = 10;
+            labelFfmpegPath.Text = "FFmpeg EXE:";
             // 
             // Form1
             // 
@@ -325,7 +326,6 @@ namespace CodificarVideoStanus
             Controls.Add(btnFfmpegPath);
             Controls.Add(txtFfmpegPath);
             Controls.Add(labelFfmpegPath);
-            Controls.Add(btnStop);
             Controls.Add(label7);
             Controls.Add(CommandTextBox);
             Controls.Add(groupBox1);
