@@ -1,13 +1,15 @@
 using System.Diagnostics;
 using System.Threading;
+using System.Threading.Tasks;
+using System.IO;
 
 namespace CodificarVideoStanus
 {
     public partial class Form1 : Form
     {
-        private Thread ffmpegThread; // Hilo para ejecutar el proceso de FFmpeg
-        private CancellationTokenSource cancellationTokenSource; // Fuente de cancelaci�n para detener el proceso
-        private Process ffmpegProcess; // Proceso de FFmpeg
+        private Task? ffmpegTask; // Tarea para ejecutar el proceso de FFmpeg de forma asíncrona
+        private CancellationTokenSource? cancellationTokenSource; // Fuente de cancelación para detener el proceso
+        private Process? ffmpegProcess; // Proceso de FFmpeg
 
         public Form1()
         {
@@ -15,16 +17,17 @@ namespace CodificarVideoStanus
 
             // Agregar la ruta de C:\ffmpeg al PATH
             string pathVariable = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Machine);
-            if (!pathVariable.Contains(@"C:\ffmpeg"))
+            if (pathVariable != null && !pathVariable.Contains(@"C:\ffmpeg"))
             {
                 pathVariable += @";C:\ffmpeg";
                 Environment.SetEnvironmentVariable("PATH", pathVariable, EnvironmentVariableTarget.Machine);
             }
+
             // Establecer los valores por defecto en los TextBox
             PadTextBox.Text = "3840:2160:0:280";
             FontSizeTextBox.Text = "18";
             PresetTextBox.Text = "fast";
-            
+
             QualityPresetComboBox.Items.AddRange(new object[] {
                 "Sin pérdida (Lossless)",
                 "Alta calidad",
@@ -51,8 +54,8 @@ namespace CodificarVideoStanus
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "Archivos de subt�tulos|*.srt|Todos los archivos|*.*";
-                openFileDialog.Title = "Seleccione el archivo de subt�tulos";
+                openFileDialog.Filter = "Archivos de subtítulos|*.srt|Todos los archivos|*.*";
+                openFileDialog.Title = "Seleccione el archivo de subtítulos";
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -66,12 +69,11 @@ namespace CodificarVideoStanus
             checkRumano.Checked = true;
         }
 
-        private void buttonConvertir_Click(object sender, EventArgs e)
+        private async void buttonConvertir_Click(object sender, EventArgs e)
         {
-
-            if (ffmpegThread != null && ffmpegThread.IsAlive)
+            if (ffmpegTask != null && !ffmpegTask.IsCompleted)
             {
-                MessageBox.Show("Ya se est� ejecutando un proceso de conversi�n.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Ya se está ejecutando un proceso de conversión.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -79,209 +81,133 @@ namespace CodificarVideoStanus
             string subtitles = SubtitlesTextBox.Text;
             string outputVideo = OutputVideoTextBox.Text;
 
-            // Obtener valores configurados desde los TextBox
+            if (string.IsNullOrEmpty(inputVideo))
+            {
+                MessageBox.Show("Por favor, seleccione un video de entrada.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            // Obtener valores configurados
             string padValue = PadTextBox.Text;
             string fontSizeValue = FontSizeTextBox.Text;
             string presetValue = PresetTextBox.Text;
 
-            // Determinar el valor de calidad (CQ) basado en la selección
-            string qualityValue = "20"; // Default Alta calidad
+            string qualityValue = "20";
             switch (QualityPresetComboBox.SelectedItem?.ToString())
             {
-                case "Sin pérdida (Lossless)":
-                    qualityValue = "0";
-                    break;
-                case "Alta calidad":
-                    qualityValue = "20";
-                    break;
-                case "Equilibrio":
-                    qualityValue = "30";
-                    break;
+                case "Sin pérdida (Lossless)": qualityValue = "0"; break;
+                case "Alta calidad": qualityValue = "20"; break;
+                case "Equilibrio": qualityValue = "30"; break;
             }
 
             string idiomaVideo = "";
-            if (checkRumano.Checked)
-                idiomaVideo = "_RO";
+            if (checkRumano.Checked) idiomaVideo = "_RO";
+            if (checkEspañol.Checked) idiomaVideo = "_ES";
 
-            if (checkEspañol.Checked)
-                idiomaVideo = "_ES";
-
-            // Obtener la fecha y hora actual
-            DateTime now = DateTime.Now;
-
-            // Formatear la fecha y hora actual en un formato que incluya segundos
-            string formattedDate = now.ToString("yyyyMMdd_HHmmss");
-            if (outputVideo == "")
+            string formattedDate = DateTime.Now.ToString("yyyyMMdd_HHmmss");
+            if (string.IsNullOrEmpty(outputVideo))
                 outputVideo = Path.GetFileNameWithoutExtension(inputVideo) + idiomaVideo + $"_{formattedDate}.mp4";
 
-
-            // Obtener el directorio donde se encuentra el archivo de video
-            string videoDirectory = Path.GetDirectoryName(inputVideo);
-
-            // Construir la l�nea de comando para cambiar al directorio
-            string cdCommand = $"cd /d \"{videoDirectory}\"";
-
-            // Construir la l�nea de comando de FFmpeg con valores configurados
-            string ffmpegCommand = $"C:\\ffmpeg\\ffmpeg.exe -i \"{Path.GetFileName(inputVideo)}\" -vf \"pad={padValue},subtitles={Path.GetFileName(subtitles)}:force_style='Fontname=Calibri,Fontsize={fontSizeValue},Bold=1,BackColour=&H80000000,Outline=0.5,Shadow=0.5'\" -c:v h264_nvenc -preset {presetValue} -cq {qualityValue} -c:a copy \"{Path.GetFileName(outputVideo)}\"";
-
-            if(checkOnlyConvert.Checked)
-                ffmpegCommand = $"C:\\ffmpeg\\ffmpeg.exe -i \"{Path.GetFileName(inputVideo)}\" -c:v h264_nvenc -preset {presetValue} -cq {qualityValue} -c:a copy \"{Path.GetFileName(outputVideo)}\"";
-
-
-
-            CommandTextBox.Text = ffmpegCommand;
-
-            // Configurar la informaci�n de inicio para ejecutar CMD
-            //ProcessStartInfo cmdStartInfo = new ProcessStartInfo
-            //{
-            //    FileName = "cmd.exe",
-            //    RedirectStandardInput = true,
-            //    UseShellExecute = false,
-            //    CreateNoWindow = false // Establecer en true si no se desea abrir una ventana de CMD
-            //};
-
-            //cmdProcess = new Process
-            //{
-            //    StartInfo = cmdStartInfo
-            //};
-
-            //// Iniciar el proceso CMD y redirigir la entrada
-            //cmdProcess.Start();
-
-            //// Enviar el comando CD a la ventana de CMD
-            //cmdProcess.StandardInput.WriteLine(cdCommand);
-
-            //// Esperar unos segundos antes de ejecutar FFmpeg
-            //Thread.Sleep(2000); // Esperar 2 segundos (puedes ajustar el tiempo)
-
-            //// Enviar el comando FFmpeg a la ventana de CMD
-            //cmdProcess.StandardInput.WriteLine(ffmpegCommand);
-
-            //// Esperar unos segundos antes de ejecutar FFmpeg
-            //Thread.Sleep(2000); // Esperar 2 segundos (puedes ajustar el tiempo)
-
-            ////Esperar a que el proceso de CMD termine
-            //cmdProcess.WaitForExit();
-
-            ////Finalizar el proceso de CMD
-            //cmdProcess.Close();
-
-            //MessageBox.Show("La conversi�n ha terminado.", "CodificarVideoStanus");
-
-
-            // Configurar la fuente de cancelaci�n
-            cancellationTokenSource = new CancellationTokenSource();
-            CancellationToken cancellationToken = cancellationTokenSource.Token;
-
-
-            // Iniciar un nuevo hilo para ejecutar CMD
-            // Iniciar un nuevo hilo para ejecutar FFmpeg
-            ffmpegThread = new Thread(() =>
+            string videoDirectory = Path.GetDirectoryName(inputVideo) ?? "";
+            
+            // FFmpeg usa argumentos separados, no una sola cadena de comando de CMD
+            // Para ejecutarlo directamente, necesitamos separar el ejecutable de los argumentos
+            string ffmpegExe = @"C:\ffmpeg\ffmpeg.exe";
+            
+            // Argumentos para FFmpeg
+            string args = $"-i \"{Path.GetFileName(inputVideo)}\" ";
+            if (!checkOnlyConvert.Checked)
             {
-                try
-                {
-                    // Crear y configurar el proceso de FFmpeg
-                    ffmpegProcess = new Process
-                    {
-                        StartInfo = new ProcessStartInfo
-                        {
-                            FileName = "cmd.exe",
-                            RedirectStandardInput = true,
-                            UseShellExecute = false,
-                            CreateNoWindow = false
-                        }
-                    };
+                args += $"-vf \"pad={padValue},subtitles={Path.GetFileName(subtitles)}:force_style='Fontname=Calibri,Fontsize={fontSizeValue},Bold=1,BackColour=&H80000000,Outline=0.5,Shadow=0.5'\" ";
+            }
+            args += $"-c:v h264_nvenc -preset {presetValue} -cq {qualityValue} -c:a copy \"{Path.GetFileName(outputVideo)}\"";
 
-                    // Iniciar el proceso FFmpeg
-                    ffmpegProcess.Start();
+            CommandTextBox.Text = $"{ffmpegExe} {args}";
+            rtbLog.Clear();
+            rtbLog.AppendText("Iniciando conversión...\n");
 
-
-                    // Enviar el comando CD a la ventana de CMD
-                    ffmpegProcess.StandardInput.WriteLine(cdCommand);
-
-                    // Esperar unos segundos antes de ejecutar FFmpeg
-                    Thread.Sleep(2000); // Esperar 2 segundos (puedes ajustar el tiempo)
-
-                    // Enviar el comando FFmpeg a la ventana de CMD
-                    ffmpegProcess.StandardInput.WriteLine(ffmpegCommand);
-
-                    // Esperar unos segundos antes de ejecutar FFmpeg
-                    Thread.Sleep(2000); // Esperar 2 segundos (puedes ajustar el tiempo)
-
-                    //Esperar a que el proceso de CMD termine
-                    ffmpegProcess.WaitForExit();
-
-                    MessageBox.Show("La conversi�n ha terminado.", "CodificarVideoStanus");
-
-                    // Esperar a que FFmpeg termine
-                    while (!ffmpegProcess.HasExited)
-                    {
-                        // Verificar si se ha solicitado la cancelaci�n
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            // Detener FFmpeg de manera ordenada
-                            ffmpegProcess.StandardInput.WriteLine("q");
-                            break;
-                        }
-
-                        // Esperar un breve per�odo para evitar un bucle de CPU
-                        Thread.Sleep(100);
-                    }
-
-                    // Cerrar el proceso FFmpeg
-                    ffmpegProcess.Close();
-                }
-                catch (Exception ex)
-                {
-                    // Manejar cualquier excepci�n que pueda ocurrir durante la ejecuci�n
-                    MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                finally
-                {
-                    // Liberar recursos
-                    cancellationTokenSource.Dispose();
-                    ffmpegProcess.Close();
-                }
-            });
-
-            // Iniciar el hilo FFmpeg
-            ffmpegThread.Start();
-
-
+            cancellationTokenSource = new CancellationTokenSource();
+            
+            try
+            {
+                ffmpegTask = RunFfmpegAsync(ffmpegExe, args, videoDirectory, cancellationTokenSource.Token);
+                await ffmpegTask;
+                MessageBox.Show("La conversión ha terminado.", "CodificarVideoStanus");
+            }
+            catch (OperationCanceledException)
+            {
+                rtbLog.AppendText("\nProceso cancelado por el usuario.\n");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                cancellationTokenSource.Dispose();
+                cancellationTokenSource = null;
+            }
         }
 
-        private void OutputVideoTextBox_TextChanged(object sender, EventArgs e)
+        private async Task RunFfmpegAsync(string exe, string args, string workingDir, CancellationToken token)
         {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = exe,
+                Arguments = args,
+                WorkingDirectory = workingDir,
+                UseShellExecute = false,
+                RedirectStandardError = true, // FFmpeg envía el log a stderr
+                RedirectStandardOutput = true,
+                CreateNoWindow = true
+            };
 
+            ffmpegProcess = new Process
+            {
+                StartInfo = startInfo
+            };
+
+            ffmpegProcess.OutputDataReceived += (s, e) => LogOutput(e.Data);
+            ffmpegProcess.ErrorDataReceived += (s, e) => LogOutput(e.Data);
+
+            ffmpegProcess.Start();
+            ffmpegProcess.BeginOutputReadLine();
+            ffmpegProcess.BeginErrorReadLine();
+
+            while (!ffmpegProcess.HasExited)
+            {
+                if (token.IsCancellationRequested)
+                {
+                    try { ffmpegProcess.Kill(); } catch { }
+                    throw new OperationCanceledException();
+                }
+                await Task.Delay(100, token);
+            }
         }
 
-        private void label5_Click(object sender, EventArgs e)
+        private void LogOutput(string text)
         {
+            if (string.IsNullOrEmpty(text)) return;
+            
+            // Invocar en el hilo de la UI
+            this.Invoke(new Action(() =>
+            {
+                rtbLog.AppendText(text + Environment.NewLine);
+                rtbLog.SelectionStart = rtbLog.Text.Length;
+                rtbLog.ScrollToCaret();
+            }));
         }
+
+        private void OutputVideoTextBox_TextChanged(object sender, EventArgs e) { }
+        private void label5_Click(object sender, EventArgs e) { }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
             if (cancellationTokenSource != null)
             {
-                // Solicitar la cancelaci�n del hilo de FFmpeg
                 cancellationTokenSource.Cancel();
-
-                // Puedes mostrar un mensaje aqu� si lo deseas
-                MessageBox.Show("Proceso de conversi�n detenido.", "Detenido", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Solicitando detener la conversión...", "Detenido", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-            //// Detener el hilo si es necesario
-            //if (cmdThread != null && cmdThread.IsAlive)
-            //{
-            //    cmdThread.Abort(); // Terminar el hilo
-            //}
-
-            //// Detener el proceso de CMD al hacer clic en el bot�n
-            //if (cmdProcess != null && !cmdProcess.HasExited)
-            //{
-            //    cmdProcess.StandardInput.WriteLine("exit"); // Cerrar la ventana de CMD
-            //    cmdProcess.WaitForExit(); // Esperar a que el proceso de CMD termine
-            //    cmdProcess.Close(); // Cerrar el proceso de CMD
-            //}
         }
     }
 }

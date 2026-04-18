@@ -52,7 +52,8 @@ namespace CodificarVideoStanus
             label5 = new Label();
             label6 = new Label();
             label7 = new Label();
-            btnStop = new Button();
+            rtbLog = new RichTextBox();
+
             checkOnlyConvert = new CheckBox();
             groupBox1.SuspendLayout();
             SuspendLayout();
@@ -268,9 +269,17 @@ namespace CodificarVideoStanus
             label7.TabIndex = 12;
             label7.Text = "Comando:";
             // 
-            // btnStop
+            // rtbLog
             // 
-            btnStop.BackColor = Color.Tomato;
+            rtbLog.BackColor = Color.Black;
+            rtbLog.ForeColor = Color.LimeGreen;
+            rtbLog.Location = new Point(172, 408);
+            rtbLog.Name = "rtbLog";
+            rtbLog.ReadOnly = true;
+            rtbLog.Size = new Size(916, 112);
+            rtbLog.TabIndex = 14;
+            rtbLog.Text = "";
+
             btnStop.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
             btnStop.Location = new Point(947, 274);
             btnStop.Name = "btnStop";
@@ -294,8 +303,9 @@ namespace CodificarVideoStanus
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1100, 534);
+            ClientSize = new Size(1100, 550);
             Controls.Add(btnStop);
+            Controls.Add(rtbLog);
             Controls.Add(label7);
             Controls.Add(label6);
             Controls.Add(label5);
@@ -344,5 +354,6 @@ namespace CodificarVideoStanus
         private CheckBox checkEspañol;
         private CheckBox checkRumano;
         private CheckBox checkOnlyConvert;
+        private RichTextBox rtbLog;
     }
 }
