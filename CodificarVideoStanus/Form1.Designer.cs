@@ -53,6 +53,10 @@ namespace CodificarVideoStanus
             label6 = new Label();
             label7 = new Label();
             rtbLog = new RichTextBox();
+            btnFfmpegPath = new Button();
+            txtFfmpegPath = new TextBox();
+            labelFfmpegPath = new Label();
+
 
             checkOnlyConvert = new CheckBox();
             groupBox1.SuspendLayout();
@@ -269,18 +273,32 @@ namespace CodificarVideoStanus
             label7.TabIndex = 12;
             label7.Text = "Comando:";
             // 
-            // rtbLog
+            // labelFfmpegPath
             // 
-            rtbLog.BackColor = Color.Black;
-            rtbLog.ForeColor = Color.LimeGreen;
-            rtbLog.Location = new Point(172, 408);
-            rtbLog.Name = "rtbLog";
-            rtbLog.ReadOnly = true;
-            rtbLog.Size = new Size(916, 112);
-            rtbLog.TabIndex = 14;
-            rtbLog.Text = "";
+            labelFfmpegPath.AutoSize = true;
+            labelFfmpegPath.Location = new Point(12, 375);
+            labelFfmpegPath.Name = "labelFfmpegPath";
+            labelFfmpegPath.Size = new Size(75, 15);
+            labelFfmpegPath.TabIndex = 15;
+            labelFfmpegPath.Text = "FFmpeg EXE:";
+            // 
+            // txtFfmpegPath
+            // 
+            txtFfmpegPath.Location = new Point(91, 372);
+            txtFfmpegPath.Name = "txtFfmpegPath";
+            txtFfmpegPath.Size = new Size(780, 23);
+            txtFfmpegPath.TabIndex = 16;
+            // 
+            // btnFfmpegPath
+            // 
+            btnFfmpegPath.Location = new Point(877, 372);
+            btnFfmpegPath.Name = "btnFfmpegPath";
+            btnFfmpegPath.Size = new Size(210, 23);
+            btnFfmpegPath.TabIndex = 17;
+            btnFfmpegPath.Text = "Buscar FFmpeg";
+            btnFfmpegPath.UseVisualStyleBackColor = true;
+            btnFfmpegPath.Click += btnFfmpegPath_Click;
 
-            btnStop.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
             btnStop.Location = new Point(947, 274);
             btnStop.Name = "btnStop";
             btnStop.Size = new Size(141, 97);
@@ -306,6 +324,9 @@ namespace CodificarVideoStanus
             ClientSize = new Size(1100, 550);
             Controls.Add(btnStop);
             Controls.Add(rtbLog);
+            Controls.Add(btnFfmpegPath);
+            Controls.Add(txtFfmpegPath);
+            Controls.Add(labelFfmpegPath);
             Controls.Add(label7);
             Controls.Add(label6);
             Controls.Add(label5);
@@ -355,5 +376,8 @@ namespace CodificarVideoStanus
         private CheckBox checkRumano;
         private CheckBox checkOnlyConvert;
         private RichTextBox rtbLog;
+        private Button btnFfmpegPath;
+        private TextBox txtFfmpegPath;
+        private Label labelFfmpegPath;
     }
 }

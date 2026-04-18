@@ -34,6 +34,7 @@ namespace CodificarVideoStanus
                 "Equilibrio"
             });
             QualityPresetComboBox.SelectedIndex = 1; // Alta calidad por defecto
+            txtFfmpegPath.Text = @"C:\ffmpeg\ffmpeg.exe";
         }
 
         private void buttonVideo_Click(object sender, EventArgs e)
@@ -67,6 +68,20 @@ namespace CodificarVideoStanus
         private void Form1_Load(object sender, EventArgs e)
         {
             checkRumano.Checked = true;
+        }
+
+        private void btnFfmpegPath_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.Filter = "Ejecutable de FFmpeg|ffmpeg.exe|Todos los archivos|*.*";
+                openFileDialog.Title = "Seleccione el ejecutable de FFmpeg";
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    txtFfmpegPath.Text = openFileDialog.FileName;
+                }
+            }
         }
 
         private async void buttonConvertir_Click(object sender, EventArgs e)
@@ -112,7 +127,14 @@ namespace CodificarVideoStanus
             
             // FFmpeg usa argumentos separados, no una sola cadena de comando de CMD
             // Para ejecutarlo directamente, necesitamos separar el ejecutable de los argumentos
-            string ffmpegExe = @"C:\ffmpeg\ffmpeg.exe";
+            string ffmpegExe = txtFfmpegPath.Text;
+
+            if (string.IsNullOrEmpty(ffmpegExe) || !File.Exists(ffmpegExe))
+            {
+                MessageBox.Show("La ruta de FFmpeg no es válida. Por favor, seleccione el ejecutable ffmpeg.exe.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             
             // Argumentos para FFmpeg
             string args = $"-i \"{Path.GetFileName(inputVideo)}\" ";
