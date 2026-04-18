@@ -69,7 +69,7 @@ namespace CodificarVideoStanus
             buttonVideo.Name = "buttonVideo";
             buttonVideo.Size = new Size(141, 122);
             buttonVideo.TabIndex = 0;
-            buttonVideo.Text = "Seleccionar video";
+            buttonVideo.Text = "📁 Seleccionar video";
             buttonVideo.UseVisualStyleBackColor = true;
             buttonVideo.Click += buttonVideo_Click;
             // 
@@ -81,7 +81,7 @@ namespace CodificarVideoStanus
             buttonConvertir.Name = "buttonConvertir";
             buttonConvertir.Size = new Size(141, 97);
             buttonConvertir.TabIndex = 2;
-            buttonConvertir.Text = "Convertir";
+            buttonConvertir.Text = "🚀 Convertir";
             buttonConvertir.UseVisualStyleBackColor = false;
             buttonConvertir.Click += buttonConvertir_Click;
             // 
@@ -92,7 +92,7 @@ namespace CodificarVideoStanus
             buttonSubtitulo.Name = "buttonSubtitulo";
             buttonSubtitulo.Size = new Size(141, 62);
             buttonSubtitulo.TabIndex = 3;
-            buttonSubtitulo.Text = "Seleccionar subtitulo";
+            buttonSubtitulo.Text = "📜 Seleccionar subtitulo";
             buttonSubtitulo.UseVisualStyleBackColor = true;
             buttonSubtitulo.Click += buttonSubtitulo_Click;
             // 
@@ -295,7 +295,7 @@ namespace CodificarVideoStanus
             btnFfmpegPath.Name = "btnFfmpegPath";
             btnFfmpegPath.Size = new Size(210, 23);
             btnFfmpegPath.TabIndex = 17;
-            btnFfmpegPath.Text = "Buscar FFmpeg";
+            btnFfmpegPath.Text = "🔍 Buscar FFmpeg";
             btnFfmpegPath.UseVisualStyleBackColor = true;
             btnFfmpegPath.Click += btnFfmpegPath_Click;
 
@@ -303,7 +303,7 @@ namespace CodificarVideoStanus
             btnStop.Name = "btnStop";
             btnStop.Size = new Size(141, 97);
             btnStop.TabIndex = 13;
-            btnStop.Text = "STOP";
+            btnStop.Text = "🛑 STOP";
             btnStop.UseVisualStyleBackColor = false;
             btnStop.Click += btnStop_Click;
             // 
