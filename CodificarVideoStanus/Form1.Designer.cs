@@ -1,4 +1,4 @@
-﻿namespace CodificarVideoStanus
+namespace CodificarVideoStanus
 {
     partial class Form1
     {
@@ -41,8 +41,9 @@
             checkRumano = new CheckBox();
             label4 = new Label();
             PresetTextBox = new TextBox();
-            label3 = new Label();
-            BitrateTextBox = new TextBox();
+            labelQuality = new Label();
+            QualityPresetComboBox = new ComboBox();
+
             label2 = new Label();
             FontSizeTextBox = new TextBox();
             label1 = new Label();
@@ -131,8 +132,8 @@
             groupBox1.Controls.Add(checkRumano);
             groupBox1.Controls.Add(label4);
             groupBox1.Controls.Add(PresetTextBox);
-            groupBox1.Controls.Add(label3);
-            groupBox1.Controls.Add(BitrateTextBox);
+            groupBox1.Controls.Add(labelQuality);
+            groupBox1.Controls.Add(QualityPresetComboBox);
             groupBox1.Controls.Add(label2);
             groupBox1.Controls.Add(FontSizeTextBox);
             groupBox1.Controls.Add(label1);
@@ -180,21 +181,24 @@
             PresetTextBox.Size = new Size(196, 23);
             PresetTextBox.TabIndex = 15;
             // 
-            // label3
+            // labelQuality
             // 
-            label3.AutoSize = true;
-            label3.Location = new Point(21, 90);
-            label3.Name = "label3";
-            label3.Size = new Size(44, 15);
-            label3.TabIndex = 12;
-            label3.Text = "Bitrate:";
+            labelQuality.AutoSize = true;
+            labelQuality.Location = new Point(21, 90);
+            labelQuality.Name = "labelQuality";
+            labelQuality.Size = new Size(55, 15);
+            labelQuality.TabIndex = 12;
+            labelQuality.Text = "Calidad:";
             // 
-            // BitrateTextBox
+            // QualityPresetComboBox
             // 
-            BitrateTextBox.Location = new Point(91, 87);
-            BitrateTextBox.Name = "BitrateTextBox";
-            BitrateTextBox.Size = new Size(196, 23);
-            BitrateTextBox.TabIndex = 13;
+            QualityPresetComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            QualityPresetComboBox.FormattingEnabled = true;
+            QualityPresetComboBox.Location = new Point(91, 87);
+            QualityPresetComboBox.Name = "QualityPresetComboBox";
+            QualityPresetComboBox.Size = new Size(196, 23);
+            QualityPresetComboBox.TabIndex = 13;
+
             // 
             // label2
             // 
@@ -326,8 +330,8 @@
         private GroupBox groupBox1;
         private Label label4;
         private TextBox PresetTextBox;
-        private Label label3;
-        private TextBox BitrateTextBox;
+        private Label labelQuality;
+        private ComboBox QualityPresetComboBox;
         private Label label2;
         private TextBox FontSizeTextBox;
         private Label label1;

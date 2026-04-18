@@ -6,7 +6,7 @@ namespace CodificarVideoStanus
     public partial class Form1 : Form
     {
         private Thread ffmpegThread; // Hilo para ejecutar el proceso de FFmpeg
-        private CancellationTokenSource cancellationTokenSource; // Fuente de cancelación para detener el proceso
+        private CancellationTokenSource cancellationTokenSource; // Fuente de cancelaciï¿½n para detener el proceso
         private Process ffmpegProcess; // Proceso de FFmpeg
 
         public Form1()
@@ -25,6 +25,13 @@ namespace CodificarVideoStanus
             FontSizeTextBox.Text = "18";
             BitrateTextBox.Text = "5M";
             PresetTextBox.Text = "fast";
+            
+            QualityPresetComboBox.Items.AddRange(new object[] {
+                "Sin pÃ©rdida (Lossless)",
+                "Alta calidad",
+                "Equilibrio"
+            });
+            QualityPresetComboBox.SelectedIndex = 1; // Alta calidad por defecto
         }
 
         private void buttonVideo_Click(object sender, EventArgs e)
@@ -45,8 +52,8 @@ namespace CodificarVideoStanus
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.Filter = "Archivos de subtítulos|*.srt|Todos los archivos|*.*";
-                openFileDialog.Title = "Seleccione el archivo de subtítulos";
+                openFileDialog.Filter = "Archivos de subtï¿½tulos|*.srt|Todos los archivos|*.*";
+                openFileDialog.Title = "Seleccione el archivo de subtï¿½tulos";
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -65,7 +72,7 @@ namespace CodificarVideoStanus
 
             if (ffmpegThread != null && ffmpegThread.IsAlive)
             {
-                MessageBox.Show("Ya se está ejecutando un proceso de conversión.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Ya se estï¿½ ejecutando un proceso de conversiï¿½n.", "Advertencia", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -76,14 +83,28 @@ namespace CodificarVideoStanus
             // Obtener valores configurados desde los TextBox
             string padValue = PadTextBox.Text;
             string fontSizeValue = FontSizeTextBox.Text;
-            string bitrateValue = BitrateTextBox.Text;
             string presetValue = PresetTextBox.Text;
+
+            // Determinar el valor de calidad (CQ) basado en la selecciÃ³n
+            string qualityValue = "20"; // Default Alta calidad
+            switch (QualityPresetComboBox.SelectedItem?.ToString())
+            {
+                case "Sin pÃ©rdida (Lossless)":
+                    qualityValue = "0";
+                    break;
+                case "Alta calidad":
+                    qualityValue = "20";
+                    break;
+                case "Equilibrio":
+                    qualityValue = "30";
+                    break;
+            }
 
             string idiomaVideo = "";
             if (checkRumano.Checked)
                 idiomaVideo = "_RO";
 
-            if (checkEspañol.Checked)
+            if (checkEspaï¿½ol.Checked)
                 idiomaVideo = "_ES";
 
             // Obtener la fecha y hora actual
@@ -98,20 +119,20 @@ namespace CodificarVideoStanus
             // Obtener el directorio donde se encuentra el archivo de video
             string videoDirectory = Path.GetDirectoryName(inputVideo);
 
-            // Construir la línea de comando para cambiar al directorio
+            // Construir la lï¿½nea de comando para cambiar al directorio
             string cdCommand = $"cd /d \"{videoDirectory}\"";
 
-            // Construir la línea de comando de FFmpeg con valores configurados
-            string ffmpegCommand = $"C:\\ffmpeg\\ffmpeg.exe -i \"{Path.GetFileName(inputVideo)}\" -vf \"pad={padValue},subtitles={Path.GetFileName(subtitles)}:force_style='Fontname=Calibri,Fontsize={fontSizeValue},Bold=1,BackColour=&H80000000,Outline=0.5,Shadow=0.5'\" -c:v h264_nvenc -preset {presetValue} -b:v {bitrateValue} -c:a copy \"{Path.GetFileName(outputVideo)}\"";
+            // Construir la lï¿½nea de comando de FFmpeg con valores configurados
+            string ffmpegCommand = $"C:\\ffmpeg\\ffmpeg.exe -i \"{Path.GetFileName(inputVideo)}\" -vf \"pad={padValue},subtitles={Path.GetFileName(subtitles)}:force_style='Fontname=Calibri,Fontsize={fontSizeValue},Bold=1,BackColour=&H80000000,Outline=0.5,Shadow=0.5'\" -c:v h264_nvenc -preset {presetValue} -cq {qualityValue} -c:a copy \"{Path.GetFileName(outputVideo)}\"";
 
             if(checkOnlyConvert.Checked)
-                ffmpegCommand = $"C:\\ffmpeg\\ffmpeg.exe -i \"{Path.GetFileName(inputVideo)}\" -c:v h264_nvenc -preset {presetValue} -b:v {bitrateValue} -c:a copy \"{Path.GetFileName(outputVideo)}\"";
+                ffmpegCommand = $"C:\\ffmpeg\\ffmpeg.exe -i \"{Path.GetFileName(inputVideo)}\" -c:v h264_nvenc -preset {presetValue} -cq {qualityValue} -c:a copy \"{Path.GetFileName(outputVideo)}\"";
 
 
 
             CommandTextBox.Text = ffmpegCommand;
 
-            // Configurar la información de inicio para ejecutar CMD
+            // Configurar la informaciï¿½n de inicio para ejecutar CMD
             //ProcessStartInfo cmdStartInfo = new ProcessStartInfo
             //{
             //    FileName = "cmd.exe",
@@ -146,10 +167,10 @@ namespace CodificarVideoStanus
             ////Finalizar el proceso de CMD
             //cmdProcess.Close();
 
-            //MessageBox.Show("La conversión ha terminado.", "CodificarVideoStanus");
+            //MessageBox.Show("La conversiï¿½n ha terminado.", "CodificarVideoStanus");
 
 
-            // Configurar la fuente de cancelación
+            // Configurar la fuente de cancelaciï¿½n
             cancellationTokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = cancellationTokenSource.Token;
 
@@ -191,12 +212,12 @@ namespace CodificarVideoStanus
                     //Esperar a que el proceso de CMD termine
                     ffmpegProcess.WaitForExit();
 
-                    MessageBox.Show("La conversión ha terminado.", "CodificarVideoStanus");
+                    MessageBox.Show("La conversiï¿½n ha terminado.", "CodificarVideoStanus");
 
                     // Esperar a que FFmpeg termine
                     while (!ffmpegProcess.HasExited)
                     {
-                        // Verificar si se ha solicitado la cancelación
+                        // Verificar si se ha solicitado la cancelaciï¿½n
                         if (cancellationToken.IsCancellationRequested)
                         {
                             // Detener FFmpeg de manera ordenada
@@ -204,7 +225,7 @@ namespace CodificarVideoStanus
                             break;
                         }
 
-                        // Esperar un breve período para evitar un bucle de CPU
+                        // Esperar un breve perï¿½odo para evitar un bucle de CPU
                         Thread.Sleep(100);
                     }
 
@@ -213,7 +234,7 @@ namespace CodificarVideoStanus
                 }
                 catch (Exception ex)
                 {
-                    // Manejar cualquier excepción que pueda ocurrir durante la ejecución
+                    // Manejar cualquier excepciï¿½n que pueda ocurrir durante la ejecuciï¿½n
                     MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 finally
@@ -243,11 +264,11 @@ namespace CodificarVideoStanus
         {
             if (cancellationTokenSource != null)
             {
-                // Solicitar la cancelación del hilo de FFmpeg
+                // Solicitar la cancelaciï¿½n del hilo de FFmpeg
                 cancellationTokenSource.Cancel();
 
-                // Puedes mostrar un mensaje aquí si lo deseas
-                MessageBox.Show("Proceso de conversión detenido.", "Detenido", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                // Puedes mostrar un mensaje aquï¿½ si lo deseas
+                MessageBox.Show("Proceso de conversiï¿½n detenido.", "Detenido", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             //// Detener el hilo si es necesario
             //if (cmdThread != null && cmdThread.IsAlive)
@@ -255,7 +276,7 @@ namespace CodificarVideoStanus
             //    cmdThread.Abort(); // Terminar el hilo
             //}
 
-            //// Detener el proceso de CMD al hacer clic en el botón
+            //// Detener el proceso de CMD al hacer clic en el botï¿½n
             //if (cmdProcess != null && !cmdProcess.HasExited)
             //{
             //    cmdProcess.StandardInput.WriteLine("exit"); // Cerrar la ventana de CMD
