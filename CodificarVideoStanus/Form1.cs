@@ -23,7 +23,6 @@ namespace CodificarVideoStanus
             // Establecer los valores por defecto en los TextBox
             PadTextBox.Text = "3840:2160:0:280";
             FontSizeTextBox.Text = "18";
-            BitrateTextBox.Text = "5M";
             PresetTextBox.Text = "fast";
             
             QualityPresetComboBox.Items.AddRange(new object[] {
@@ -104,7 +103,7 @@ namespace CodificarVideoStanus
             if (checkRumano.Checked)
                 idiomaVideo = "_RO";
 
-            if (checkEspa�ol.Checked)
+            if (checkEspañol.Checked)
                 idiomaVideo = "_ES";
 
             // Obtener la fecha y hora actual
